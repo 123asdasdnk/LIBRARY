@@ -1,0 +1,118 @@
+
+import java.sql.* ;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        try(Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/test","root","ysc2265495098");
+            Statement statement = connection.createStatement();
+            Scanner scanner = new Scanner(System.in) ){
+
+            while(true) {
+                System.out.println("============图书管理系统===========");
+                System.out.println("1.增加书籍信息");
+                System.out.println("2.查阅书籍信息");
+                System.out.println("3.删除书籍信息");
+                System.out.println("4.修改书籍信息");
+                System.out.println("5.退出系统");
+                System.out.println("=================================");
+                System.out.print("请输入你像要的操作的序号:");
+                switch(scanner.nextInt()) {
+                    case 1:
+                        scanner.nextLine();//吸收回车
+                        System.out.print("请输入书籍的编号:");//输入书籍信息
+                        int number = scanner.nextInt();
+                        scanner.nextLine();//吸收回车
+                        System.out.print("请输入书籍的名字:");
+                        String name = scanner.nextLine();
+                        System.out.print("请输入书籍的作者:");
+                        String author = scanner.nextLine();
+                        System.out.print("请输入书籍的价格:");
+                        int price = scanner.nextInt();
+                        Book book = new Book(number, name, author, price); //创建书籍
+                        String Insertsql = "insert into book(number,name,author,price) values("+book.Number+",'" +book.Name+"','"+book.Author+"',"+book.Price+")";
+                        // System.out.println(sql);//用于调试
+                        statement.executeUpdate(Insertsql);
+                        System.out.println("添加成功！");
+                        break;
+                    case 2:
+                        scanner.nextLine();//吸收回车
+                        System.out.print("请输入你所要查找数据的编号:");
+                        int num = scanner.nextInt();
+                        scanner.nextLine();
+                        String Querysql ="select * from book where number = "+num+ "";
+                        ResultSet set = statement.executeQuery(Querysql);
+                        while(set.next()) {
+                            System.out.println("查找成功！");
+                            System.out.println("编号:" + set.getInt(1) + " 书名:" + set.getString(2) + " 作者:" + set.getString(3) + " 价格:" + set.getInt(4));
+                        }
+                        break;
+                    case 3:
+                        scanner.nextLine();//吸收回车
+                        System.out.print("请输入你所要删除数据的编号:");
+                        int delete = scanner.nextInt();
+                        scanner.nextLine();
+                        String deletesql = "delete from book where number = " +delete+"";
+                        // System.out.println(deletesql );
+                        statement.executeUpdate(deletesql );
+                        System.out.println("删除成功！");
+
+                        break;
+                    case 4:
+                        scanner.nextLine();//吸收回车
+                        System.out.print("请输入你所要修改数据的编号:");
+                        int update = scanner.nextInt();
+                        scanner.nextLine();
+
+                        System.out.print("请输入书籍的新的编号:");
+                        int newnumber = scanner.nextInt() ;
+                        scanner.nextLine();
+                        System.out.print("请输入书籍的名字:");
+                        String newname = scanner.nextLine();
+
+                        System.out.print("请输入书籍的作者:");
+                        String newauthor = scanner.nextLine();
+
+                        System.out.print("请输入书籍的价格:");
+                        int newprice = scanner.nextInt();
+
+                        //Book newbook = new Book(newnumber, newname, newauthor, newprice); //新创建书籍
+
+                        String updatesql= "update book set number = " + newnumber + ","+ "name = '" + newname + "',"+ "author = '"+ newauthor +"'," +"price = "+newprice +" where number ="+update+ " " ;
+
+                        //System.out.println(updatesql );//用于调试
+
+                        statement.executeUpdate(updatesql );
+                        System.out.println("修改成功！");
+
+
+                        break;
+                    case 5:
+                        System.out.println("感谢你的使用，再见");
+                        return;
+                }
+            }
+            
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+}
+
+————————————————————————————
+Book类
+public class Book {
+    int Number;
+    String Name;
+    String Author;
+    int Price;
+
+    Book(int number, String name, String author, int price){
+        Number = number;
+        Name = name;
+        Author = author;
+        Price = price;
+    }
+    
+}
